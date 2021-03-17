@@ -22,10 +22,10 @@ def choose_human_turn():
     return True
 
 
-def show_text_fields(fld1, lbl1, fld2, lbl2):
-    print(f"{lbl1} player:")
+def show_text_fields(fld1, fld2):
+    print(f"{fld1.player_id} player:")
     fld1.show_text_whole()
-    print(f"{lbl2} player:")
+    print(f"{fld2.player_id} player:")
     fld2.show_text_whole()
 
 
@@ -37,11 +37,11 @@ def game_round():
         return False
     # Human's turn if human_turn = True, AI's turn else
     human_turn = choose_human_turn()
-    humans_field = SeaBattleField(manually=True)
-    ai_field = SeaBattleField(manually=False)
+    humans_field = SeaBattleField("Human", manually=True)
+    ai_field = SeaBattleField("AI", manually=False)
 
     turn_counter = 0
-    show_text_fields(ai_field, "AI", humans_field, "Human")
+    show_text_fields(ai_field, humans_field)
     while humans_field.is_not_empty and ai_field.is_not_empty:
         if human_turn:
             ai_field.get_turn(manually=True)
@@ -50,7 +50,7 @@ def game_round():
         turn_counter += 1
         human_turn = not human_turn
         print(f"Turn #{turn_counter//2 + 1}")
-        show_text_fields(ai_field, "AI", humans_field, "Human")
+        show_text_fields(ai_field, humans_field)
 
     if humans_field.is_empty:
         print("You loose.")

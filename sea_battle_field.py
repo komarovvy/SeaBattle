@@ -1,10 +1,14 @@
 FIELD_SIZE = 6
+SHIPS_NUMBER = {1:4, 2:3, 3:2, 4:1}
 
 
 class SeaBattleField:
+    player_id = None
     _field = [[0 for j in range(FIELD_SIZE)] for i in range(FIELD_SIZE)]
+    _ships_position = []
 
-    def __init__(self, manually):
+    def __init__(self, player_id, manually):
+        self._player_id = player_id
         if manually:
             # fill the field manually
             pass
