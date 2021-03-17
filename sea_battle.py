@@ -48,8 +48,10 @@ def game_round():
         else:
             humans_field.get_turn(manually=False)
         turn_counter += 1
+        human_turn = not human_turn
         print(f"Turn #{turn_counter//2 + 1}")
         show_text_fields(ai_field, "AI", humans_field, "Human")
+
     if humans_field.is_empty:
         print("You loose.")
     else:
