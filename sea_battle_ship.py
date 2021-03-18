@@ -1,6 +1,5 @@
 class SeaBattleShip:
     _cells_xy = []
-    _cells_alive = []
     _vertical = None
     
     def __init__(self, x1, y1, x2, y2):
@@ -8,13 +7,11 @@ class SeaBattleShip:
             if y1 > y2:
                 y1, y2 = y2, y1
             self._cells_xy = [(x1, y) for y in range(y1, y2+1)]
-            self._cells_alive = [True] * (y2-y1+1)
             self._vertical = True
         elif y1 == y2:
             if x1 > x2:
                 x1, x2 = x2, x1
             self._cells_xy = [(x, y1) for x in range(x1, x2+1)]
-            self._cells_alive = [True] * (x2-x1+1)
             self._vertical = False
         else:
             raise ValueError("A ship can be whether vertical or horizontal!")

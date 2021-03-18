@@ -22,11 +22,11 @@ def choose_human_turn():
     return True
 
 
-def show_text_fields(fld1, fld2, hydden_if_ai = True):
+def show_text_fields(fld1, fld2, hidden_if_ai = True):
     print(f"{fld1.player_id} player:")
-    fld1.show_text_whole(hidden=(hydden_if_ai and fld1.player_id == 'AI'))
+    fld1.show_text_whole(hidden=(hidden_if_ai and fld1.player_id == 'AI'))
     print(f"{fld2.player_id} player:")
-    fld2.show_text_whole(hidden=(hydden_if_ai and fld2.player_id == 'AI'))
+    fld2.show_text_whole(hidden=(hidden_if_ai and fld2.player_id == 'AI'))
 
 
 def game_round():
@@ -50,7 +50,7 @@ def game_round():
         turn_counter += 1
         human_turn = not human_turn
         print(f"Turn #{turn_counter//2 + 1}")
-        show_text_fields(ai_field, humans_field)
+        show_text_fields(ai_field, humans_field, hidden_if_ai=False)
 
     if humans_field.is_empty:
         print("You loose.")
