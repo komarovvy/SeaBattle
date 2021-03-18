@@ -1,5 +1,5 @@
 FIELD_SIZE = 6
-SHIPS_NUMBER = {1:4, 2:3, 3:2, 4:1}
+SHIPS_NUMBER = {1:4, 2:2, 3:1}
 TEST_SHIP_SET = [
               ]
 
