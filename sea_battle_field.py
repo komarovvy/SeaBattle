@@ -1,3 +1,4 @@
+import random as rnd
 from sea_battle_ship import SeaBattleShip
 
 FIELD_SIZE = 6
@@ -16,12 +17,14 @@ TEST_SHIP_SET = [SeaBattleShip(1,2, 3,2),
 
 class SeaBattleField:
     player_id = None
-    _shots = {}
-    _ships = []
+    _shots = None
+    _ships = None
 
     def __init__(self, player_id, manually):
         self.player_id = player_id
         if manually:
+            self._ships = []
+            self._shots = {}
             # fill the field manually
             need_to_add = SHIPS_NUMBER.copy()
             print(f"You need to place {sum(need_to_add.values())} ships on a field: {self.show_ship_number(need_to_add)}")
@@ -60,17 +63,19 @@ class SeaBattleField:
             # fill the field automatically
             # temporary solution:
             self._ships = TEST_SHIP_SET.copy() # TODO write a random ship generator!
+            self._shots = {}
 
     @staticmethod
     def ship_str_to_coords(ship_str):
         try:
             result = tuple(map(int, ship_str.replace(",", " ").strip().split()))
+            result = (result[1], result[0], result[3], result[2]) # TODO Remove when replace (x,y) onto (line,col) in SeaBattleShip class
         except ValueError:
             raise TypeError("Incorrect string structure! It should consists of digits, spaces and commas.")
         else:
             if len(result) != 4:
                 raise TypeError("Incorrect number of coordinates! Four numbers should be in input.")
-        return result[1], result[0], result[3], result[2]
+        return result
 
     @staticmethod
     def show_ship_number(ship_len_num_dict):
@@ -81,16 +86,35 @@ class SeaBattleField:
 
     @property
     def is_not_empty(self):
-        return True
+        alive_ship_cells = 0
+        for ship in self._ships:
+            for cell in ship.cells:
+                if cell not in self._shots:
+                    return True
+        return False
 
     @property
     def is_empty(self):
         return not self.is_not_empty
 
-    def get_turn(self, manually):
+    def get_turn(self, turn_num, manually):
         if manually:
             # get the turn manually
-            pass
+            while True:
+                try:
+                    shot_coords = tuple(map(int, input("Enter a cell to shot (line, column): ")
+                                                 .replace(","," ").strip().split()))
+                    shot_coords = (shot_coords[1], shot_coords[0]) # TODO Remove when replace (x,y) onto (line,col) in SeaBattleShip class
+                except ValueError:
+                    print(f"Two integers in 1..{FIELD_SIZE} range separated by ' ' or ',' should be in input!")
+                else:
+                    if not (1 <= shot_coords[0] <= FIELD_SIZE and 1 <= shot_coords[1] <= FIELD_SIZE):
+                        print(f"Coordinates of shot should be in 1..{FIELD_SIZE} range!")
+                    elif shot_coords in self._shots.keys():
+                        print(f"This cell was already attacked! Choose another cell, please.")
+                    else:
+                        self._shots[shot_coords] = turn_num
+                        break
         else:
             # get the turn automatically
             pass
