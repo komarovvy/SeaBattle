@@ -25,7 +25,7 @@ class SeaBattleShip:
     
     @property
     def cells(self):
-        return list(zip(self._cells_xy, self._cells_alive))
+        return self._cells_xy
 
     @property
     def close_area_rect(self):
