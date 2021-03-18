@@ -20,7 +20,7 @@ class SeaBattleField:
     _ships = []
 
     def __init__(self, player_id, manually):
-        self._player_id = player_id
+        self.player_id = player_id
         if manually:
             # fill the field manually
             pass
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     f1.show_text_whole(hidden=False)
 
     f1._shots[(1,1)] = 5
-    f1._shots[(2,4)] = 5
+    f1._shots[(2,4)] = 7
     f1.show_text_whole(hidden=True)
 
     print(True*1, True*2, False*1)

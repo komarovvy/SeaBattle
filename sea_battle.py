@@ -22,11 +22,11 @@ def choose_human_turn():
     return True
 
 
-def show_text_fields(fld1, fld2):
+def show_text_fields(fld1, fld2, hydden_if_ai = True):
     print(f"{fld1.player_id} player:")
-    fld1.show_text_whole()
+    fld1.show_text_whole(hidden=(hydden_if_ai and fld1.player_id == 'AI'))
     print(f"{fld2.player_id} player:")
-    fld2.show_text_whole()
+    fld2.show_text_whole(hidden=(hydden_if_ai and fld2.player_id == 'AI'))
 
 
 def game_round():
