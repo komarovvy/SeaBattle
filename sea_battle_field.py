@@ -23,11 +23,61 @@ class SeaBattleField:
         self.player_id = player_id
         if manually:
             # fill the field manually
-            pass
+            need_to_add = SHIPS_NUMBER.copy()
+            print(f"You need to place {sum(need_to_add.values())} ships on a field: {self.show_ship_number(need_to_add)}")
+            print("Enter a ship the first and the last cells in format 'line1,column1 line2,column2'")
+            print(" e.g. '1,1 1,3' for horizontal 3-cell ship:")
+            ship_counter = 0
+            while need_to_add:
+                resp = input(f" your ship #{ship_counter+1}: ")
+                try:
+                    self._ships.append(SeaBattleShip(*self.ship_str_to_coords(resp)))
+                except ValueError:
+                    print("A ship can be whether vertical (column1 = column2) or horizontal (line1 = line2)!")
+                    print("Try again, please.")
+                except TypeError:
+                    print(f"Four integers in 1..{FIELD_SIZE} range separated by ' ' or ',' should be in input!")
+                    print("Try again, please.")
+                else:
+                    new_ship = self._ships[-1]
+                    if new_ship.len in need_to_add.keys():
+                        for n, old_ship in enumerate(self._ships[:-1]):
+                            if not new_ship.is_compatible(old_ship):
+                                self._ships.pop()
+                                print(f"This ship is conflicting with a ship #{n+1}: {old_ship.cells[0]}..{old_ship.cells[-1]}. Try again!")
+                                break
+                        else:
+                            need_to_add[new_ship.len] -= 1
+                            if need_to_add[new_ship.len] == 0:
+                                need_to_add.pop(new_ship.len)
+                            ship_counter += 1
+                    else:
+                        print("You do not need a ship of length ", new_ship.len)
+                        self._ships.pop()
+                self.show_text_whole(hidden=False)
+                print(f"You need to place more {sum(need_to_add.values())} ships on a field: {self.show_ship_number(need_to_add)}")
         else:
             # fill the field automatically
             # temporary solution:
             self._ships = TEST_SHIP_SET.copy() # TODO write a random ship generator!
+
+    @staticmethod
+    def ship_str_to_coords(ship_str):
+        try:
+            result = tuple(map(int, ship_str.replace(",", " ").strip().split()))
+        except ValueError:
+            raise TypeError("Incorrect string structure! It should consists of digits, spaces and commas.")
+        else:
+            if len(result) != 4:
+                raise TypeError("Incorrect number of coordinates! Four numbers should be in input.")
+        return result[1], result[0], result[3], result[2]
+
+    @staticmethod
+    def show_ship_number(ship_len_num_dict):
+        result = ""
+        for ship_len, ship_num in ship_len_num_dict.items():
+            result = result + f"{ship_num} of {ship_len}-cell, "
+        return result[:-2]
 
     @property
     def is_not_empty(self):
