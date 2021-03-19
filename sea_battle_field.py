@@ -71,22 +71,22 @@ class SeaBattleField:
                     cur_cell = self.add_ship_after_cell(cur_cell, ship_type)
                     need_to_add[ship_type] -= 1
             # # flip ships diagonally
-            # TODO add field transformations to make ship allocation less predictable
-            # if rnd.randint(0,1):
-            #     for ship in self._ships:
-            #         ship.swap_lc()
-            # if rnd.randint(0,1):
-            #     for ship in self._ships:
-            #         ship.invert_l()
-            # if rnd.randint(0,1):
-            #     for ship in self._ships:
-            #         ship.invert_l()
-
+            if rnd.randint(0,1):
+                for ship in self._ships:
+                    ship.swap_lc()
             # add 1-cell ships
-            # TODO add allocation of 1-cell ships
-            # if 1 in SHIPS_NUMBER.keys():
-            #     for i in range(SHIPS_NUMBER[1]):
-            #         cell = (rnd.random(1, FIELD_SIZE), rnd.random(1, FIELD_SIZE))
+            if 1 in SHIPS_NUMBER.keys():
+                for i in range(SHIPS_NUMBER[1]):
+                    for cell in self.get_next_cell(init_cell=(rnd.randint(1, FIELD_SIZE), rnd.randint(1, FIELD_SIZE))):
+                        test_ship = SeaBattleShip(*cell, *cell)
+                        for ship in self._ships:
+                            if not test_ship.is_compatible(ship):
+                                break
+                        else:
+                            self._ships.append(test_ship)
+                            break
+                    else:
+                        assert False, "1-cell ships can not be allocated"
 
 
     def add_ship_after_cell(self, start_cell, ship_len, tolerance=1):
@@ -213,6 +213,22 @@ class SeaBattleField:
                     cell_code = 0
                 print(f" {CELL_SYMBOLS[cell_code]} |", end="")
             print()
+
+    def line_by_line(self, hidden = False):
+        line_str = f" {' '*2}  "
+        for col in range(1, FIELD_SIZE+1):
+            line_str += f" {col}  "
+        yield line_str
+        # lines enumeration
+        for line in range(1, FIELD_SIZE+1):
+            line_str = f"{line:3} |"
+            # columns enumeration
+            for col in range(1, FIELD_SIZE+1):
+                cell_code = 1 + self.is_shot_cell((line, col))*2 + self.is_ship_cell((line, col))*1
+                if hidden and cell_code <= 2:
+                    cell_code = 0
+                line_str += f" {CELL_SYMBOLS[cell_code]} |"
+            yield line_str
 
 
 if __name__ == "__main__":
