@@ -101,6 +101,24 @@ class SeaBattleField:
     def is_empty(self):
         return not self.is_not_empty
 
+    @staticmethod
+    def get_next_cell(init_cell=(1,1)):
+        def correct_cell(cell):
+            if cell[0] > FIELD_SIZE:
+                cell = (1, cell[1]+1)
+            if cell[1] > FIELD_SIZE:
+                cell = (cell[0], 1)
+            return cell
+
+        iter_cell = init_cell
+        yield iter_cell
+        while True:
+            iter_cell = (iter_cell[0] + 1, iter_cell[1])
+            iter_cell = correct_cell(iter_cell)
+            if iter_cell == init_cell:
+                break
+            yield iter_cell
+
     def get_turn(self, turn_num, manually):
         if manually:
             # get the turn manually
@@ -122,7 +140,13 @@ class SeaBattleField:
                         break
         else:
             # get the turn automatically
-            pass
+            start_cell = (rnd.randint(1, FIELD_SIZE), rnd.randint(1, FIELD_SIZE))
+            for cell in self.get_next_cell(start_cell):
+                if cell not in self._shots.keys():
+                    self._shots[cell] = turn_num
+                    break
+            else:
+                raise AssertionError("All the fields are shot, but some ships looks alive!")
 
     def is_ship_cell(self, cell):
         for ship in self._ships:
@@ -159,5 +183,9 @@ if __name__ == "__main__":
     f1._shots[(1,1)] = 5
     f1._shots[(2,4)] = 7
     f1.show_text_whole(hidden=True)
+
+    for cell in f1.get_next_cell((2,2)):
+        print(cell)
+
 
 

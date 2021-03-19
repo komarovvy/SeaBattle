@@ -37,20 +37,20 @@ def game_round():
         return False
     # Human's turn if human_turn = True, AI's turn else
     human_turn = choose_human_turn()
-    humans_field = SeaBattleField("Human", manually=True) #True
+    humans_field = SeaBattleField("Human", manually=False) #True
     ai_field = SeaBattleField("AI", manually=False)
 
     turn_counter = 0
     show_text_fields(ai_field, humans_field)
     while humans_field.is_not_empty and ai_field.is_not_empty:
+        turn_counter += 1
         if human_turn:
             ai_field.get_turn(turn_counter, manually=True)
         else:
             humans_field.get_turn(turn_counter, manually=False)
-        turn_counter += 1
+            print(f"Turn #{turn_counter // 2 + 1}")
+            show_text_fields(ai_field, humans_field, hidden_if_ai=True)
         human_turn = not human_turn
-        print(f"Turn #{turn_counter//2 + 1}")
-        show_text_fields(ai_field, humans_field, hidden_if_ai=True)
 
     if humans_field.is_empty:
         print("You loose.")
