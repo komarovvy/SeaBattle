@@ -71,15 +71,23 @@ class SeaBattleField:
                     cur_cell = self.add_ship_after_cell(cur_cell, ship_type)
                     need_to_add[ship_type] -= 1
             # # flip ships diagonally
-            # if rnd.randint(1,1):
+            # TODO add field transformations to make ship allocation less predictable
+            # if rnd.randint(0,1):
             #     for ship in self._ships:
-            #         ship.swap_lc_direct()
-            # if rnd.randint(0,0):
+            #         ship.swap_lc()
+            # if rnd.randint(0,1):
             #     for ship in self._ships:
-            #         ship.swap_ls_invert()
+            #         ship.invert_l()
+            # if rnd.randint(0,1):
+            #     for ship in self._ships:
+            #         ship.invert_l()
 
             # add 1-cell ships
-            pass
+            # TODO add allocation of 1-cell ships
+            # if 1 in SHIPS_NUMBER.keys():
+            #     for i in range(SHIPS_NUMBER[1]):
+            #         cell = (rnd.random(1, FIELD_SIZE), rnd.random(1, FIELD_SIZE))
+
 
     def add_ship_after_cell(self, start_cell, ship_len, tolerance=1):
         #print("Enter with a cell =", start_cell, ", ship length = ", ship_len)
