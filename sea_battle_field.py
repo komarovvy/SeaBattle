@@ -69,7 +69,11 @@ class SeaBattleField:
     def ship_str_to_coords(ship_str):
         try:
             result = tuple(map(int, ship_str.replace(",", " ").strip().split()))
-            result = (result[1], result[0], result[3], result[2]) # TODO Remove when replace (x,y) onto (line,col) in SeaBattleShip class
+            if len(result) == 2:
+                # 1-cell ship
+                result = result * 2
+            elif len(result) != 4:
+                raise ValueError("Exactly 4 integers (start line, column, end line, column) are expected!")
         except ValueError:
             raise TypeError("Incorrect string structure! It should consists of digits, spaces and commas.")
         else:
@@ -104,7 +108,8 @@ class SeaBattleField:
                 try:
                     shot_coords = tuple(map(int, input("Enter a cell to shot (line, column): ")
                                                  .replace(","," ").strip().split()))
-                    shot_coords = (shot_coords[1], shot_coords[0]) # TODO Remove when replace (x,y) onto (line,col) in SeaBattleShip class
+                    if len(shot_coords) != 2:
+                        raise ValueError("Exactly two integers (line and column numbers) are expected!")
                 except ValueError:
                     print(f"Two integers in 1..{FIELD_SIZE} range separated by ' ' or ',' should be in input!")
                 else:
@@ -120,29 +125,27 @@ class SeaBattleField:
             pass
 
     def is_ship_cell(self, cell):
-        #print("ship",cell)
         for ship in self._ships:
             if cell in ship.cells:
                 return True
         return False
 
     def is_shot_cell(self, cell):
-        #print("shot",cell)
         if cell in self._shots.keys():
             return True
         return False
 
     def show_text_whole(self, hidden = False):
         print(f" {' '*2}  ", end="")
-        for x in range(1, FIELD_SIZE+1):
-            print(f" {x}  ", end="")
+        for col in range(1, FIELD_SIZE+1):
+            print(f" {col}  ", end="")
         print()
         # lines enumeration
-        for y in range(1, FIELD_SIZE+1):
-            print(f"{y:3} |", end="")
+        for line in range(1, FIELD_SIZE+1):
+            print(f"{line:3} |", end="")
             # columns enumeration
-            for x in range(1, FIELD_SIZE+1):
-                cell_code = 1 + self.is_shot_cell((x,y))*2 + self.is_ship_cell((x,y))*1
+            for col in range(1, FIELD_SIZE+1):
+                cell_code = 1 + self.is_shot_cell((line, col))*2 + self.is_ship_cell((line, col))*1
                 if hidden and cell_code <= 2:
                     cell_code = 0
                 print(f" {CELL_SYMBOLS[cell_code]} |", end="")
@@ -157,6 +160,4 @@ if __name__ == "__main__":
     f1._shots[(2,4)] = 7
     f1.show_text_whole(hidden=True)
 
-    print(True*1, True*2, False*1)
-    print(f1.is_ship_cell((1,2)))
 
