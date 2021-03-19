@@ -41,7 +41,7 @@ def game_round():
     ai_field = SeaBattleField("AI", manually=False)
 
     turn_counter = 0
-    show_text_fields(ai_field, humans_field)
+    show_text_fields(ai_field, humans_field, hidden_if_ai=False)
     while humans_field.is_not_empty and ai_field.is_not_empty:
         turn_counter += 1
         if human_turn:
@@ -49,7 +49,7 @@ def game_round():
         else:
             humans_field.get_turn(turn_counter, manually=False)
             print(f"Turn #{turn_counter // 2 + 1}")
-            show_text_fields(ai_field, humans_field, hidden_if_ai=True)
+            show_text_fields(ai_field, humans_field, hidden_if_ai=False)
         human_turn = not human_turn
 
     if humans_field.is_empty:

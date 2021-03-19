@@ -61,9 +61,39 @@ class SeaBattleField:
                 print(f"You need to place more {sum(need_to_add.values())} ships on a field: {self.show_ship_number(need_to_add)}")
         else:
             # fill the field automatically
-            # temporary solution:
-            self._ships = TEST_SHIP_SET.copy() # TODO write a random ship generator!
+            self._ships = []
             self._shots = {}
+            # add multicell ships
+            need_to_add = {ship_type: ship_num for ship_type, ship_num in SHIPS_NUMBER.items() if ship_type > 1}
+            cur_cell = (rnd.randint(1,2), 1)
+            for ship_type in need_to_add:
+                while need_to_add[ship_type] > 0:
+                    cur_cell = self.add_ship_after_cell(cur_cell, ship_type)
+                    need_to_add[ship_type] -= 1
+            # # flip ships diagonally
+            # if rnd.randint(1,1):
+            #     for ship in self._ships:
+            #         ship.swap_lc_direct()
+            # if rnd.randint(0,0):
+            #     for ship in self._ships:
+            #         ship.swap_ls_invert()
+
+            # add 1-cell ships
+            pass
+
+    def add_ship_after_cell(self, start_cell, ship_len, tolerance=1):
+        #print("Enter with a cell =", start_cell, ", ship length = ", ship_len)
+        assert FIELD_SIZE >= ship_len, "Can not initialize a field: a ship is longer than a field!"
+        if start_cell[0] + ship_len - 1 > FIELD_SIZE:
+            assert start_cell[1] + 2 <= FIELD_SIZE, "Can not allocate multicell ships via 'parallel parking' algorithm."
+            start_cell = (rnd.randint(1, 1+tolerance), start_cell[1]+2)
+            if start_cell[0] + ship_len - 1 > FIELD_SIZE:
+                start_cell = (1, start_cell[1])
+
+        #print(f"Add ship {start_cell[0]},{start_cell[1]} - {start_cell[0] + ship_len - 1},{start_cell[1]}")
+        self._ships.append(SeaBattleShip(start_cell[0], start_cell[1],
+                                         start_cell[0] + ship_len - 1, start_cell[1]))
+        return start_cell[0] + ship_len + 1, start_cell[1]
 
     @staticmethod
     def ship_str_to_coords(ship_str):
@@ -103,6 +133,7 @@ class SeaBattleField:
 
     @staticmethod
     def get_next_cell(init_cell=(1,1)):
+        #TODO place this function out of method to aviod duplication!
         def correct_cell(cell):
             if cell[0] > FIELD_SIZE:
                 cell = (1, cell[1]+1)
